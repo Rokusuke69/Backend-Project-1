@@ -1,4 +1,6 @@
 var ImageKit = require("imagekit");
+var mongoose = require('mongoose');
+var path = require('path'); 
 
 var imagekit = new ImageKit({
     publicKey : process.env.IMAGEKIT_PUBLIC_KEY,
@@ -6,12 +8,15 @@ var imagekit = new ImageKit({
     urlEndpoint : process.env.IMAGEKIT_URL_ENDPOINT
 });
 
-
 function uploadFile(file){
     return new Promise((resolve, reject) => {
+        
+        const fileExtension = path.extname(file.originalname); 
+
         imagekit.upload({
             file: file.buffer,
-            fileName: file.originalname, // I changed this back to the original name, which is usually more helpful
+            fileName: new mongoose.Types.ObjectId().toString() + fileExtension, 
+            folder: "Moody-Player-Audio",
             
             // --- THIS IS THE FIX ---
             timeout: 60000 // 60,000ms = 60 seconds
