@@ -1,18 +1,140 @@
+/* components/MoodSongs.css */
 .mood-songs {
     width: 100%;
-    padding: 4rem;
-    padding-top: 0;
+    padding: 2rem;
+    background: var(--dark);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
     color: white;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 .mood-songs h2 {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
 }
 
-.mood-songs .song {
+.songs-list {
     display: flex;
-    width: 100%;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.song {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
-    margin: 0.5rem 0;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.song:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(108, 99, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.song-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.song-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--light);
+}
+
+.song-artist {
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+.song-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.play-pause-button {
+    background: var(--primary);
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 10px rgba(108, 99, 255, 0.3);
+}
+
+.play-pause-button:hover {
+    background: var(--primary-dark);
+    transform: scale(1.05);
+}
+
+.play-pause-button i {
+    color: white;
+    font-size: 1.2rem;
+}
+
+.audio-player {
+    display: none;
+}
+
+.no-songs {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--gray);
+}
+
+.no-songs-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .mood-songs {
+        padding: 1.5rem;
+    }
+    
+    .song {
+        padding: 1rem;
+    }
+    
+    .song-controls {
+        gap: 0.75rem;
+    }
+    
+    .play-pause-button {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .song {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .song-controls {
+        width: 100%;
+        justify-content: flex-end;
+    }
 }
