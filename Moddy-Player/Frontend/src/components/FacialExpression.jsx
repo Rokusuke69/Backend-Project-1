@@ -6,10 +6,6 @@ import axios from 'axios';
 export default function FacialExpression({setSongs}) {
     const videoRef = useRef();
 
-    // --- Cleanup function Ref ---
-    // Added a ref to hold the video stream for cleanup
-    const streamRef = useRef(null);
-
     const loadModels = async () => {
         const MODEL_URL = '/models';
         await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
@@ -19,9 +15,9 @@ export default function FacialExpression({setSongs}) {
     const startVideo = () => {
         navigator.mediaDevices.getUserMedia({ video: true })
             .then((stream) => {
-                if (videoRef.current) {
+                // Check if videoRef.current is available before assigning
+                if(videoRef.current) {
                     videoRef.current.srcObject = stream;
-                    streamRef.current = stream; // Store the stream for cleanup
                 }
             })
             .catch((err) => console.error("Error accessing webcam: ", err));
@@ -29,8 +25,8 @@ export default function FacialExpression({setSongs}) {
 
     async function detectMood() {
         if (!videoRef.current) {
-            console.error("Video element not available");
-            return;
+             console.error("Video ref not available for detection.");
+             return; // Exit if video element isn't ready
         }
         try {
             const detections = await faceapi
@@ -55,51 +51,32 @@ export default function FacialExpression({setSongs}) {
                 }
             }
 
-            // --- Use Environment Variable for API URL ---
+            // --- USE ENVIRONMENT VARIABLE ---
             const apiUrl = import.meta.env.VITE_API_URL;
-            console.log(`Fetching songs for mood: ${_expression} from ${apiUrl}`); // Log the URL being used
+            console.log(`Fetching songs for mood: ${_expression} from ${apiUrl}`); // Log for debugging
 
+            // Make the API call using the environment variable
             axios.get(`${apiUrl}/songs?mood=${_expression}`)
                 .then(response => {
                     console.log("API Response:", response.data);
-                    setSongs(response.data.songs || []); // Ensure setSongs receives an array
+                    // Ensure setSongs always receives an array, even if response.data.songs is undefined
+                    setSongs(response.data.songs || []); 
                 })
                 .catch(error => {
+                    // Basic error logging
                     console.error("Error fetching songs:", error);
-                    // Handle specific errors if needed (e.g., CORS, 404)
-                    if (error.response) {
-                        // The request was made and the server responded with a status code
-                        // that falls out of the range of 2xx
-                        console.error("Error data:", error.response.data);
-                        console.error("Error status:", error.response.status);
-                    } else if (error.request) {
-                        // The request was made but no response was received
-                        console.error("Error request:", error.request);
-                    } else {
-                        // Something happened in setting up the request that triggered an Error
-                        console.error('Error message:', error.message);
-                    }
                     setSongs([]); // Clear songs on error
                 });
-
         } catch (error) {
-            console.error("Error during face detection:", error);
-            setSongs([]); // Clear songs on detection error
+             console.error("Error during face detection:", error);
+             setSongs([]); // Clear songs on detection error
         }
     }
 
     useEffect(() => {
         loadModels().then(startVideo);
-
-        // --- Cleanup Function ---
-        // Stops the webcam when the component unmounts
-        return () => {
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach(track => track.stop());
-                console.log("Webcam stream stopped");
-            }
-        };
-    }, []); // Empty dependency array ensures this runs only once on mount
+        // No cleanup function added, as requested
+    }, []); // Empty dependency array ensures this runs only once
 
     return (
         <div className='mood-element'>
@@ -113,3 +90,4 @@ export default function FacialExpression({setSongs}) {
         </div>
     );
 }
+
